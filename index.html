@@ -2,301 +2,936 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Digital Fidget Toy</title>
-  <style>
-    body {
-      margin: 0;
-      background: #fff;
-      font-family: monospace;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      padding: 20px;
-      justify-content: center;
-    }
-    .toy {
-      width: 320px;
-      height: 360px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      border: 2px solid black;
-      background: #f9f9f9;
-      overflow: hidden;
-    }
-    .toy-label {
-      font-size: 1rem;
-      margin: 10px 0 5px 0;
-    }
-    .bubble-grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      grid-template-rows: repeat(6, 1fr);
-      width: 100%;
-      height: 100%;
-    }
-    .bubble {
-      background: #ccc;
-      border-radius: 50%;
-      margin: 5px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .popped {
-      background: #f0f0f0 !important;
-    }
-    #spinnerCanvas, #paintCanvas {
-      width: 100%;
-      height: auto;
-      cursor: pointer;
-    }
-    #petEmoji {
-      font-size: 6rem;
-      margin-top: auto;
-      margin-bottom: auto;
-      cursor: pointer;
-    }
-    .swatch-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: repeat(3, 1fr);
-      width: 100%;
-      height: 100%;
-    }
-    .swatch-cell {
-      background-color: white;
-      border: 2px solid black;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-    .highlighted {
-      background-color: red !important;
-    }
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      font-size: 0.8rem;
-      padding: 5px;
-      justify-content: center;
-    }
-    #scrollZone, #busyTyping {
-      width: 100%;
-      height: 100%;
-      overflow-y: auto;
-      padding: 10px;
-      white-space: pre-wrap;
-    }
-    #replyOutput {
-      flex-grow: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      text-align: center;
-      padding: 10px;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>not_working.doc</title>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&family=Roboto&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+<style>
+:root {
+  --bg: #f8f9fa;
+  --card-bg: #ffffff;
+  --text-color: #202124;
+  --border-color: #dadce0;
+  --hover-bg: rgba(60, 64, 67, 0.08);
+  --active-bg: #e8f0fe;
+  --primary-blue: #1a73e8;
+}
+
+[data-theme="dark"] {
+  --bg: #202124;
+  --card-bg: #303134;
+  --text-color: #e8eaed;
+  --border-color: #5f6368;
+  --hover-bg: rgba(255,255,255,0.1);
+  --active-bg: #3c4043;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text-color);
+  font-family: 'Google Sans', Roboto, Arial, sans-serif;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--card-bg);
+  padding: 6px 16px;
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-wrap: wrap;
+}
+
+.logo-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.menu-bar {
+  display: flex;
+  gap: 8px;
+  margin-left: 30px;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+
+.menu-bar div,
+.menu-bar button {
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 4px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  font-family: inherit;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  transition: background 0.2s;
+}
+
+.menu-bar div:hover,
+.menu-bar button:hover {
+  background: var(--hover-bg);
+}
+
+.active-tab {
+  background: var(--active-bg);
+  font-weight: 500;
+  border-color: var(--primary-blue);
+}
+
+[data-theme="dark"] .active-tab {
+  background: #3c4043;
+  border-color: #8ab4f8;
+}
+
+.grid-tab .material-icons {
+  font-size: 18px;
+  margin-right: 4px;
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.share-btn {
+  background-color: var(--primary-blue);
+  color: white;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 24px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.share-btn:hover {
+  background-color: #1967d2;
+}
+
+.tooltip-container {
+  position: relative;
+}
+.tooltip {
+  visibility: hidden;
+  opacity: 0;
+  background-color: #5f6368;
+  color: #fff;
+  font-size: 11px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  position: absolute;
+  top: -36px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.tooltip-container:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(-4px);
+}
+
+.circle-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--primary-blue);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.toy-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 24px;
+  justify-content: center;
+}
+
+.toy {
+  width: 320px;
+  height: 360px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: opacity 0.2s ease;
+}
+
+.toy-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-color);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg);
+}
+.toy-label .material-icons {
+  vertical-align: middle;
+  font-size: 16px;
+  margin-right: 4px;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg);
+}
+
+.toolbar button,
+.toolbar input,
+.toolbar label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 12px;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.toolbar button:hover {
+  background-color: var(--hover-bg);
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.menu-bar div:active,
+.menu-bar button:active,
+.toolbar button:active,
+.share-btn:active {
+  transform: scale(0.97);
+}
+
+#busyTyping {
+  cursor: text;
+  caret-color: var(--primary-blue);
+}
+
+#petStats {
+  font-size: 12px;
+  padding: 0 16px 12px;
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-color);
+}
+#petEmoji {
+  font-size: 6rem;
+  margin: auto;
+  cursor: pointer;
+  animation: bounce 1s infinite alternate ease-in-out;
+}
+@keyframes bounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(-10px); }
+}
+
+
+.emoji-scenery {
+  position: relative;
+  background: linear-gradient(to top, #b3e5fc, #e1f5fe);
+  border-radius: 8px;
+  flex: 1;
+  padding: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+.floating-cloud {
+  position: absolute;
+  font-size: 2rem;
+  top: 10px;
+  animation: floatClouds 20s linear infinite;
+}
+.cloud-right {
+  left: auto;
+  right: 10px;
+  animation-delay: 10s;
+}
+@keyframes floatClouds {
+  0% { transform: translateX(-100vw); }
+  100% { transform: translateX(100vw); }
+}
+.pet-display {
+  font-size: 4rem;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+.pet-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 10px;
+}
+.pet-buttons button {
+  font-size: 1.2rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.pet-buttons button:hover {
+  background: var(--hover-bg);
+}
+.happy-bounce {
+  animation: bounce 0.6s ease;
+}
+@keyframes bounce {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+
+.chaos-mode {
+  background: #fff0f0;
+  color: #000;
+  font-size: 18px;
+  animation: chaosBounce 0.05s infinite alternate, chaosColor 0.2s infinite;
+  font-family: 'Comic Sans MS', cursive;
+}
+@keyframes chaosBounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(-5px); }
+}
+@keyframes chaosColor {
+  0% { background-color: #fff0f0; }
+  50% { background-color: #ffe0e0; }
+  100% { background-color: #fff0f0; }
+}
+
+</style>
+
 </head>
-<body>
-
-  <!-- Bubble Wrap -->
-  <div class="toy">
-    <div class="toy-label">Bubble Wrap</div>
-    <div class="bubble-grid" id="bubbleGrid"></div>
-  </div>
-
-  <!-- Fidget Spinner -->
-  <div class="toy">
-    <div class="toy-label">Fidget Spinner</div>
-    <canvas id="spinnerCanvas" width="300" height="300"></canvas>
-  </div>
-
-  <!-- Pet Zone -->
-  <div class="toy">
-    <div class="toy-label">Pet Zone</div>
-    <div id="petEmoji">🐶</div>
-  </div>
-
-  <!-- Paint Tool -->
-  <div class="toy">
-    <div class="toy-label">Paint Tool</div>
-    <div class="controls">
-      <button onclick="tool = 'draw'">Draw</button>
-      <button onclick="tool = 'erase'">Erase</button>
-      <label>Brush: <input type="range" min="5" max="50" value="10" id="brushSize"></label>
-      <input type="color" id="colorPicker" value="#ff0000">
-      <button onclick="clearCanvas()">Clear</button>
+<body data-theme="light">
+  <header>
+    <div class="logo-title">
+      <span class="material-icons">description</span>
+      <span>not_working.doc</span>
+      <nav class="menu-bar">
+        <div onclick="setView('bubble')">Bubble Wrap</div>
+        <div onclick="setView('spinner')">Fidget Spinner</div>
+        <div onclick="setView('pet')">Pet Zone</div>
+        <div onclick="setView('paint')">Paint Tool</div>
+        <div onclick="setView('cube')">Chase the Cube</div>
+        <div onclick="setView('reply')">Meeting Reply</div>
+        <div onclick="setView('busy')">Busy Typing</div>
+        <div onclick="setView('counter')">Endless Counter</div>
+        <div onclick="setView('grid')" class="grid-tab">
+          <span class="material-icons">grid_view</span> Grid View
+        </div>
+        <button onclick="toggleTheme()" style="height: 32px;">
+          <span class="material-icons">dark_mode</span>
+        </button>
+      </nav>
     </div>
-    <canvas id="paintCanvas" width="300" height="260"></canvas>
+    <div class="top-actions">
+      <div class="tooltip-container">
+        <button class="share-btn">
+          <span class="material-icons">lock</span> Share
+        </button>
+        <div class="tooltip">Private to only you</div>
+      </div>
+      <div class="circle-avatar">D</div>
+    </div>
+  </header>
+  <div class="toy-container" id="toyContainer">
+    <div class="toy" id="bubble">
+      <div class="toy-label">Bubble Wrap <button onclick="refillBubbles()" style="float:right;">Refill</button></div>
+      <div id="bubbleGrid" style="display: grid; gap: 6px; padding: 10px; flex: 1; justify-content: center; align-content: start; overflow-y: auto;"></div>
+    </div>
+
+    <div class="toy" id="spinner">
+      <div class="toy-label">Fidget Spinner</div>
+      <canvas id="spinnerCanvas" width="600" height="600" style="width: 100%; height: 100%; max-width: 600px; max-height: 600px;"></canvas>
+    </div>
+
+    
+    <div class="toy" id="pet">
+      <div class="toy-label"><span class="material-icons">pets</span> Pet Zone</div>
+      <div class="emoji-scenery">
+        <div class="floating-cloud">☁️</div>
+        <div class="floating-cloud cloud-right">☁️</div>
+        <div class="pet-display">
+          <div id="emojiPet">🐶</div>
+        </div>
+        <div id="petStats"><span id="level">🔼 Level: 1</span><span id="xp">⭐ XP: 0</span><span id="hunger">🍗 Hunger: 5</span><span id="happy">😊 Mood: 5</span><span id="sleep">💤 Energy: 5</span></div>
+        <div class="pet-buttons">
+          <button onclick="feedPet()">🍕 Feed</button>
+          <button onclick="playPet()">🪁 Play</button>
+          <button onclick="petPet()">🤲 Pet</button>
+          <button onclick="restPet()">💤 Rest</button>
+        </div>
+      </div>
+    </div>
+    
+
+    <div class="toy" id="paint">
+      <div class="toy-label">Paint Tool</div>
+      <div class="toolbar" style="display: flex; flex-wrap: wrap; gap: 8px;">
+        <div style="flex-basis: 100%; display: flex; gap: 8px;">
+          <button onclick="tool = 'draw'">Draw</button>
+          <button onclick="tool = 'erase'">Erase</button>
+          <label>Brush <input type="range" id="brushSize" min="5" max="50" value="10"></label>
+        </div>
+        <div style="flex-basis: 100%; display: flex; gap: 8px;">
+          <input type="color" id="colorPicker" value="#ff0000">
+          <button onclick="clearCanvas()">Clear</button>
+        </div>
+      </div>
+      <canvas id="paintCanvas" width="1200" height="800" style="width: 100%; height: 100%;"></canvas>
+    </div>
+
+    <div class="toy" id="cube" style="flex-shrink: 0;">
+      <div class="toy-label">Chase the Cube</div>
+      <div id="swatchGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); width: 100%; height: 100%;"></div>
+    </div>
+
+    <div class="toy" id="reply" style="flex-shrink: 0;">
+      <div class="toy-label">Meeting Reply Generator</div>
+      <div id="replyOutput" style="flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; padding: 12px; font-size: 14px;">Click below to generate</div>
+      <button onclick="generateReply()" style="margin: 8px auto 16px auto;">Click for Reply</button>
+    </div>
+
+    <div class="toy" id="busy" style="flex-shrink: 0;">
+      <div class="toy-label">Busy Document</div>
+      <div class="toolbar">
+        <button onclick="toggleFormatting(this, 'bold')"><span class="material-icons">format_bold</span></button>
+        <button onclick="toggleFormatting(this, 'italic')"><span class="material-icons">format_italic</span></button>
+        <button onclick="fakeUndo()"><span class="material-icons">undo</span></button>
+        <select id="fontSelector" onchange="changeFont(this.value)">
+          <option value="inherit">Default</option>
+          <option value="Roboto">Roboto</option>
+          <option value="Courier New">Courier New</option>
+          <option value="Georgia">Georgia</option>
+          <option value="Arial">Arial</option>
+        </select>
+      </div>
+      <div id="busyTyping" contenteditable="true" style="flex: 1; overflow-y: auto; padding: 16px; font-size: 14px; line-height: 1.6; color: var(--text-color); white-space: pre-wrap;"></div>
+    </div>
+
+    
+    <div class="toy" id="counter" style="flex-shrink: 0;">
+      <div style="padding: 0 16px; font-size: 12px;">
+        ⏱️ Speed:
+        <input type="range" id="speedSlider" min="0" max="100" value="50">
+      </div>
+    
+      <div class="toy-label">Endless Counter</div>
+      <div id="scrollZone" style="flex: 1; overflow-y: auto; padding: 16px; font-size: 14px; line-height: 1.6; color: var(--text-color); white-space: pre-wrap;"></div>
+    </div>
   </div>
-
-  <!-- Chase the Cube -->
-  <div class="toy">
-    <div class="toy-label">Chase the Cube</div>
-    <div class="swatch-grid" id="swatchGrid"></div>
-  </div>
-
-  <!-- Meeting Reply Generator -->
-  <div class="toy">
-    <div class="toy-label">Meeting Reply Generator</div>
-    <div id="replyOutput">Click below to generate</div>
-    <button id="replyButton">Click for Reply</button>
-  </div>
-
-  <!-- Busy Typing -->
-  <div class="toy">
-    <div class="toy-label">Busy Document</div>
-    <div id="busyTyping" contenteditable="true"></div>
-  </div>
-
-  <!-- Endless Counter -->
-  <div class="toy">
-    <div class="toy-label">Endless Counter</div>
-    <div id="scrollZone"></div>
-  </div>
-
-<script>
-  // Bubble Wrap
-  const bubbleGrid = document.getElementById('bubbleGrid');
-  for (let i = 0; i < 36; i++) {
-    const bubble = document.createElement('div');
-    bubble.classList.add('bubble');
-    bubble.addEventListener('click', () => bubble.classList.toggle('popped'));
-    bubbleGrid.appendChild(bubble);
-  }
-
-  // Spinner
-  const spinnerCanvas = document.getElementById('spinnerCanvas');
-  const spinnerCtx = spinnerCanvas.getContext('2d');
-  let angle = 0;
-  let velocity = 0;
-  let spinning = false;
-  function drawSpinner() {
-    spinnerCtx.clearRect(0, 0, 300, 300);
-    spinnerCtx.save();
-    spinnerCtx.translate(150, 150);
-    spinnerCtx.rotate(angle);
-    for (let i = 0; i < 3; i++) {
-      spinnerCtx.beginPath();
-      spinnerCtx.arc(60, 0, 20, 0, Math.PI * 2);
-      spinnerCtx.fillStyle = '#000';
-      spinnerCtx.fill();
-      spinnerCtx.rotate(Math.PI * 2 / 3);
+  <script>
+    function setView(viewId) {
+      document.querySelectorAll('.menu-bar div').forEach(el => el.classList.remove('active-tab'));
+      const tab = Array.from(document.querySelectorAll('.menu-bar div')).find(el => el.textContent.toLowerCase().includes(viewId.replace(/_/g, '').toLowerCase()));
+      if (tab) tab.classList.add('active-tab');
+      const container = document.getElementById('toyContainer');
+      const toys = container.children;
+      for (let toy of toys) {
+        if (viewId === 'grid') {
+          toy.style.display = 'flex';
+          toy.style.width = '320px';
+          toy.style.height = '360px';
+        } else {
+          if (toy.id === viewId) {
+            toy.style.display = 'flex';
+            toy.style.width = '90vw';
+            toy.style.height = '80vh';
+          } else {
+            toy.style.display = 'none';
+          }
+        }
+      }
+      if (viewId === 'bubble' || viewId === 'grid') {
+        setTimeout(refillBubbles, 100);
+      }
     }
-    spinnerCtx.beginPath();
-    spinnerCtx.arc(0, 0, 10, 0, Math.PI * 2);
-    spinnerCtx.fillStyle = '#888';
-    spinnerCtx.fill();
-    spinnerCtx.restore();
-    angle += velocity;
-    velocity *= 0.95;
-    requestAnimationFrame(drawSpinner);
-  }
-  spinnerCanvas.addEventListener('mousedown', () => spinning = true);
-  spinnerCanvas.addEventListener('mouseup', () => {
-    if (spinning) velocity = 0.15;
-    spinning = false;
-  });
-  spinnerCanvas.addEventListener('mousemove', () => {
-    if (spinning) velocity += 0.005;
-  });
-  drawSpinner();
 
-  // Pet Zone
-  const petEmoji = document.getElementById('petEmoji');
-  const pets = ['🐶', '🐱', '🐹', '🐰', '🦊', '🐸'];
-  let petIndex = 0;
-  petEmoji.addEventListener('click', () => {
-    petIndex = (petIndex + 1) % pets.length;
-    petEmoji.textContent = pets[petIndex];
-  });
-
-  // Paint Tool
-  const paintCanvas = document.getElementById('paintCanvas');
-  const paintCtx = paintCanvas.getContext('2d');
-  let painting = false;
-  let tool = 'draw';
-  let brushSize = 10;
-  let color = document.getElementById('colorPicker').value;
-  document.getElementById('colorPicker').addEventListener('input', e => color = e.target.value);
-  document.getElementById('brushSize').addEventListener('input', e => brushSize = parseInt(e.target.value));
-  function clearCanvas() {
-    paintCtx.clearRect(0, 0, paintCanvas.width, paintCanvas.height);
-  }
-  paintCanvas.addEventListener('mousedown', () => painting = true);
-  paintCanvas.addEventListener('mouseup', () => painting = false);
-  paintCanvas.addEventListener('mouseleave', () => painting = false);
-  paintCanvas.addEventListener('mousemove', e => {
-    if (!painting) return;
-    const rect = paintCanvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    paintCtx.fillStyle = (tool === 'erase') ? '#f9f9f9' : color;
-    paintCtx.fillRect(x, y, brushSize, brushSize);
-  });
-
-  // Chase the Cube
-  const swatchGrid = document.getElementById('swatchGrid');
-  const swatchCells = [];
-  let currentSwatch = 0;
-  for (let i = 0; i < 9; i++) {
-    const cell = document.createElement('div');
-    cell.classList.add('swatch-cell');
-    if (i === 0) {
-      cell.classList.add('highlighted');
-      currentSwatch = 0;
+    function toggleTheme() {
+      const current = document.body.getAttribute('data-theme');
+      document.body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
     }
-    cell.addEventListener('click', () => {
-      if (cell.classList.contains('highlighted')) {
-        let next;
-        do {
-          next = Math.floor(Math.random() * 9);
-        } while (next === currentSwatch);
-        swatchCells[currentSwatch].classList.remove('highlighted');
-        swatchCells[next].classList.add('highlighted');
-        currentSwatch = next;
+
+    window.onload = () => {
+      setView('grid');
+      drawSpinner();
+      startCounter();
+    };
+
+    // === Bubble Wrap ===
+    function refillBubbles() {
+      const bubbleGrid = document.getElementById('bubbleGrid');
+      bubbleGrid.innerHTML = '';
+      const gridRect = bubbleGrid.getBoundingClientRect();
+      const bubbleSize = 40;
+      const bubbleGap = 6;
+      const columns = Math.floor((gridRect.width + bubbleGap) / (bubbleSize + bubbleGap));
+      const rows = Math.floor((gridRect.height + bubbleGap) / (bubbleSize + bubbleGap));
+      const count = columns * rows;
+      bubbleGrid.style.gridTemplateColumns = `repeat(${columns}, ${bubbleSize}px)`;
+      for (let i = 0; i < count; i++) {
+        const bubble = document.createElement('div');
+        bubble.style.background = (document.body.getAttribute('data-theme') === 'dark') ? '#383838' : '#ccc';
+        bubble.style.borderRadius = '50%';
+        bubble.style.height = `${bubbleSize}px`;
+        bubble.style.width = `${bubbleSize}px`;
+        bubble.style.cursor = 'pointer';
+        bubble.style.transition = 'background 0.3s';
+        bubble.addEventListener('click', () => bubble.style.background = (document.body.getAttribute('data-theme') === 'dark') ? '#4a4a4a' : '#eee');
+        bubbleGrid.appendChild(bubble);
+      }
+    }
+
+    window.addEventListener('resize', () => {
+      if (document.getElementById('bubble').style.display !== 'none') {
+        refillBubbles();
       }
     });
-    swatchGrid.appendChild(cell);
-    swatchCells.push(cell);
-  }
 
-  // Meeting Replies
-  const replies = [
-    "That's a great point.",
-    "I think it depends on the context.",
-    "Can we circle back to that?",
-    "I'm aligned either way.",
-    "Let me follow up offline.",
-    "Good question, let's take that one away.",
-    "It’s on our radar."
-  ];
-  document.getElementById('replyButton').addEventListener('click', () => {
-    const output = document.getElementById('replyOutput');
-    output.textContent = replies[Math.floor(Math.random() * replies.length)];
-  });
+    // === Fidget Spinner ===
+    const spinnerCanvas = document.getElementById('spinnerCanvas');
+    const spinnerCtx = spinnerCanvas.getContext('2d');
+    let angle = 0, velocity = 0, spinning = false;
+    function drawSpinner() {
+      spinnerCtx.clearRect(0, 0, spinnerCanvas.width, spinnerCanvas.height);
+      spinnerCtx.save();
+      spinnerCtx.translate(spinnerCanvas.width / 2, spinnerCanvas.height / 2);
+      spinnerCtx.rotate(angle);
+      for (let i = 0; i < 3; i++) {
+        spinnerCtx.beginPath();
+        spinnerCtx.arc(60, 0, 20, 0, Math.PI * 2);
+        spinnerCtx.fillStyle = '#000';
+        spinnerCtx.fill();
+        spinnerCtx.rotate(Math.PI * 2 / 3);
+      }
+      spinnerCtx.beginPath();
+      spinnerCtx.arc(0, 0, 10, 0, Math.PI * 2);
+      spinnerCtx.fillStyle = '#888';
+      spinnerCtx.fill();
+      spinnerCtx.restore();
+      angle += velocity;
+      velocity *= 0.95;
+      requestAnimationFrame(drawSpinner);
+    }
+    spinnerCanvas.addEventListener('mousedown', () => spinning = true);
+    spinnerCanvas.addEventListener('mouseup', () => { if (spinning) velocity = 0.15; spinning = false; });
+    spinnerCanvas.addEventListener('mousemove', () => { if (spinning) velocity += 0.005; });
 
-  // Busy Typing
-  const busyTyping = document.getElementById('busyTyping');
-  busyTyping.addEventListener('keydown', (e) => {
-    e.preventDefault();
-    busyTyping.textContent += 'I am very busy. ';
-    busyTyping.scrollTop = busyTyping.scrollHeight;
-  });
+    
+    // === Pet Zone Enhanced ===
+    const pet = document.getElementById('emojiPet');
+    
+    
+    const hungerStat = document.getElementById('hunger');
+    const happyStat = document.getElementById('happy');
+    const sleepStat = document.getElementById('sleep');
 
-  // Endless Counter
+    const pets = ['🐶', '🐱', '🐹', '🐰', '🦊', '🐸', '🐻', '🐵'];
+    let petIndex = 0;
+    let hunger = 5, mood = 5, energy = 5;
+
+    
+    let xp = 0;
+    let level = 1;
+
+    function gainXP(amount) {
+      xp += amount;
+      if (xp >= level * 10) {
+        xp = 0;
+        level++;
+        pet.classList.add('happy-bounce');
+      }
+      document.getElementById('xp').textContent = `⭐ XP: ${xp}`;
+      document.getElementById('level').textContent = `🔼 Level: ${level}`;
+    }
+
+    function updateStats() {
+      hungerStat.textContent = `🍗 Hunger: ${hunger}`;
+      happyStat.textContent = `😊 Mood: ${mood}`;
+      sleepStat.textContent = `💤 Energy: ${energy}`;
+    }
+
+    function feedPet() {
+      hunger = Math.min(10, hunger + 2);
+            gainXP(1);
+      updateStats();
+    }
+
+    function playPet() {
+      mood = Math.min(10, mood + 2);
+            gainXP(1);
+      updateStats();
+    }
+
+    function petPet() {
+      mood = Math.min(10, mood + 1);
+      pet.classList.add('happy-bounce');
+      setTimeout(() => pet.classList.remove('happy-bounce'), 600);
+      gainXP(1);
+      updateStats();
+    }
+
+    function restPet() {
+      energy = Math.min(10, energy + 3);
+      gainXP(1);
+      updateStats();
+    }
+
+    setInterval(() => {
+      hunger = Math.max(0, hunger - 1);
+      mood = Math.max(0, mood - 1);
+      energy = Math.max(0, energy - 1);
+      gainXP(1);
+      updateStats();
+    }, 15000);
+
+    pet.addEventListener('click', () => {
+      petIndex = (petIndex + 1) % pets.length;
+      pet.textContent = pets[petIndex];
+    });
+
+    gainXP(1);
+      updateStats();
+
+    const paintCanvas = document.getElementById('paintCanvas');
+    const paintCtx = paintCanvas.getContext('2d');
+    let painting = false, tool = 'draw';
+    let brushSize = 10, color = document.getElementById('colorPicker').value;
+    document.getElementById('colorPicker').addEventListener('input', e => color = e.target.value);
+    document.getElementById('brushSize').addEventListener('input', e => brushSize = parseInt(e.target.value));
+    function clearCanvas() { paintCtx.clearRect(0, 0, paintCanvas.width, paintCanvas.height); }
+    paintCanvas.addEventListener('mousedown', () => painting = true);
+    paintCanvas.addEventListener('mouseup', () => painting = false);
+    paintCanvas.addEventListener('mouseleave', () => painting = false);
+    paintCanvas.addEventListener('mousemove', e => {
+      if (!painting) return;
+      const scaleX = paintCanvas.width / paintCanvas.getBoundingClientRect().width;
+      const scaleY = paintCanvas.height / paintCanvas.getBoundingClientRect().height;
+      const rect = paintCanvas.getBoundingClientRect();
+      const x = (e.clientX - rect.left) * scaleX;
+      const y = (e.clientY - rect.top) * scaleY;
+      paintCtx.fillStyle = (tool === 'erase') ? '#f1f3f4' : color;
+      paintCtx.beginPath();
+      paintCtx.arc(x, y, brushSize / 2, 0, Math.PI * 2);
+      paintCtx.fill();
+    });
+
+    // === Chase the Cube ===
+    const swatchGrid = document.getElementById('swatchGrid');
+    const swatchCells = [];
+    let currentSwatch = 0;
+    for (let i = 0; i < 9; i++) {
+      const cell = document.createElement('div');
+      cell.style.border = '2px solid black';
+      cell.style.backgroundColor = 'white';
+      if (i === 0) {
+        cell.style.backgroundColor = 'red';
+        currentSwatch = 0;
+      }
+      cell.addEventListener('click', () => {
+        if (cell.style.backgroundColor === 'red') {
+          let next;
+          do {
+            next = Math.floor(Math.random() * 9);
+          } while (next === currentSwatch);
+          swatchCells[currentSwatch].style.backgroundColor = 'white';
+          swatchCells[next].style.backgroundColor = 'red';
+          currentSwatch = next;
+        }
+      });
+      swatchGrid.appendChild(cell);
+      swatchCells.push(cell);
+    }
+
+    // === Meeting Reply ===
+    function generateReply() {
+      const replies = [
+        "That's a great point.", "I think it depends on the context.", "Can we circle back to that?",
+        "I'm aligned either way.", "Let me follow up offline.", "Good question, let's take that one away.", "It’s on our radar."
+      ];
+      document.getElementById('replyOutput').textContent = replies[Math.floor(Math.random() * replies.length)];
+    }
+
+    
+    let isBoldActive = false;
+    let isItalicActive = false;
+
+    // === Busy Typing ===
+    const busyTyping = document.getElementById('busyTyping');
+    const busyHistory = [];
+    busyTyping.addEventListener('keydown', (e) => {
+      e.preventDefault();
+      busyHistory.push(busyTyping.innerHTML);
+      
+      let text = 'I am very busy. ';
+      if (isBoldActive) text = '<strong>' + text + '</strong>';
+      if (isItalicActive) text = '<em>' + text + '</em>';
+      busyTyping.innerHTML += text;
+    
+      busyTyping.scrollTop = busyTyping.scrollHeight;
+    });
+    function fakeUndo() { if (busyHistory.length > 0) busyTyping.innerHTML = busyHistory.pop(); }
+    
+    
+    
+    function toggleFormatting(button, type) {
+      const isActive = button.classList.toggle('active-tab');
+      if (type === 'bold') {
+        isBoldActive = isActive;
+      } else if (type === 'italic') {
+        isItalicActive = isActive;
+      }
+      busyTyping.focus();
+    }
+
+
+    function changeFont(font) {
+      busyTyping.style.fontFamily = font;
+    }
+
+    const busyTypingCursor = document.createElement('span');
+    busyTypingCursor.id = 'typing-cursor';
+    busyTypingCursor.textContent = '|';
+    busyTypingCursor.style.animation = 'blink 1s infinite';
+    busyTyping.appendChild(busyTypingCursor);
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+      }
+      #typing-cursor {
+        display: inline-block;
+        margin-left: 2px;
+        color: var(--text-color);
+      }
+    `;
+    document.head.appendChild(style);
+
+    // === Endless Counter ===
+    const scrollZone = document.getElementById('scrollZone');
+    let count = 0;
+    function startCounter() {
+      setInterval(() => {
+        scrollZone.textContent += `${count++}
+`;
+        scrollZone.scrollTop = scrollZone.scrollHeight;
+      }, 50);
+    }
+  </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const slider = document.getElementById('speedSlider');
   const scrollZone = document.getElementById('scrollZone');
   let count = 0;
-  function addNumber() {
-    scrollZone.textContent += `${count++}\n`;
-    scrollZone.scrollTop = scrollZone.scrollHeight;
+  let lastTime = 0;
+  let elapsed = 0;
+
+  function getChaosLine(num) {
+    const chaos = ['🔥','💥','👾','😵‍💫','🤯'];
+    return num + ' ' + chaos[Math.floor(Math.random() * chaos.length)].repeat(Math.floor(Math.random() * 8));
   }
-  setInterval(addNumber, 50);
+
+  function loop(timestamp) {
+    const speed = parseInt(slider.value);
+    if (speed === 0) {
+      requestAnimationFrame(loop);
+      return;
+    }
+
+    const interval = 5000 - (speed * 49); // speed 1–100 → 4900–100ms
+
+    if (lastTime === 0) lastTime = timestamp;
+    elapsed += timestamp - lastTime;
+    lastTime = timestamp;
+
+    if (elapsed >= interval) {
+      let line = count;
+      if (speed === 100) {
+        line = getChaosLine(count);
+        scrollZone.classList.add('chaos-mode');
+      } else {
+        scrollZone.classList.remove('chaos-mode');
+      }
+
+      scrollZone.textContent += line + "\n";
+      scrollZone.scrollTop = scrollZone.scrollHeight;
+
+      if (count === 100) scrollZone.textContent += "🎉 Century Club!\n";
+      if (count === 420) scrollZone.textContent += "🍃 Stay lifted.\n";
+      if (count === 1000) scrollZone.textContent += "🎺 You made it to 1K!\n";
+
+      count++;
+      elapsed = 0;
+    }
+
+    requestAnimationFrame(loop);
+  }
+
+  if (slider && scrollZone) {
+    requestAnimationFrame(loop);
+  }
+});
+</script>
+
+
+<script>
+// Wind Tunnel - particles follow mouse
+document.addEventListener("DOMContentLoaded", () => {
+  const wind = document.getElementById("wind");
+  if (wind) {
+    wind.innerHTML = '<canvas id="windCanvas" width="600" height="400"></canvas>';
+    const canvas = document.getElementById("windCanvas");
+    const ctx = canvas.getContext("2d");
+    let particles = Array.from({length: 100}, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: 0, vy: 0
+    }));
+    let mouseX = 0, mouseY = 0;
+    canvas.addEventListener('mousemove', e => {
+      const rect = canvas.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
+    });
+    function draw() {
+      ctx.fillStyle = 'rgba(255,255,255,0.1)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        let dx = mouseX - p.x;
+        let dy = mouseY - p.y;
+        let dist = Math.sqrt(dx*dx + dy*dy);
+        let force = Math.min(10 / (dist || 1), 1);
+        p.vx += force * dx * 0.01;
+        p.vy += force * dy * 0.01;
+        p.vx *= 0.9;
+        p.vy *= 0.9;
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > canvas.width || p.y < 0 || p.y > canvas.height) {
+          p.x = Math.random() * canvas.width;
+          p.y = Math.random() * canvas.height;
+        }
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2, 0, 2 * Math.PI);
+        ctx.fillStyle = '#888';
+        ctx.fill();
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
+
+  // Slime Stretch
+  const slime = document.getElementById("slime");
+  if (slime) {
+    slime.innerHTML = '<div id="slimeBlob" style="width:100px;height:100px;border-radius:50%;background:#a6f;position:relative;cursor:pointer;"></div>';
+    const blob = document.getElementById("slimeBlob");
+    blob.addEventListener("mousedown", e => {
+      const origin = {x: e.clientX, y: e.clientY};
+      function move(ev) {
+        let dx = ev.clientX - origin.x;
+        let dy = ev.clientY - origin.y;
+        blob.style.transform = `scale(${1 + Math.abs(dx)/200}, ${1 + Math.abs(dy)/200})`;
+      }
+      function up() {
+        blob.style.transform = `scale(1, 1)`;
+        window.removeEventListener("mousemove", move);
+        window.removeEventListener("mouseup", up);
+      }
+      window.addEventListener("mousemove", move);
+      window.addEventListener("mouseup", up);
+    });
+  }
+
+  // Wobble Stack
+  const stack = document.getElementById("stack");
+  if (stack) {
+    stack.innerHTML = '<div id="stackZone" style="position:relative;height:300px;background:#eee;"></div>';
+    const zone = document.getElementById("stackZone");
+    zone.addEventListener("click", () => {
+      const box = document.createElement("div");
+      box.style.width = "40px";
+      box.style.height = "40px";
+      box.style.background = "#" + Math.floor(Math.random()*0xffffff).toString(16);
+      box.style.position = "absolute";
+      box.style.left = Math.random()*260 + "px";
+      box.style.top = (zone.childElementCount * 40) + "px";
+      box.style.transform = `rotate(${Math.random() * 10 - 5}deg)`;
+      zone.appendChild(box);
+    });
+  }
+
+  // Stretchy UI Simulator
+  const stretchy = document.getElementById("stretchy");
+  if (stretchy) {
+    stretchy.innerHTML = '<div id="stretchBtn" style="width:100px;height:40px;background:#ccc;border-radius:8px;text-align:center;line-height:40px;">Stretch Me</div>';
+    const btn = document.getElementById("stretchBtn");
+    btn.addEventListener("mousedown", e => {
+      const originX = e.clientX;
+      function move(ev) {
+        let dx = ev.clientX - originX;
+        btn.style.width = `${100 + dx}px`;
+      }
+      function up() {
+        window.removeEventListener("mousemove", move);
+        window.removeEventListener("mouseup", up);
+        btn.style.width = "100px";
+      }
+      window.addEventListener("mousemove", move);
+      window.addEventListener("mouseup", up);
+    });
+  }
+});
 </script>
 
 </body>
